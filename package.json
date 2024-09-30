@@ -4,7 +4,7 @@
     "description": "Shopify form to collect data and store it in MongoDB",
     "main": "server.js",
     "scripts": {
-        "start": "nodemon server/server.js"
+        "start": "node server/server.js"
     },
     "dependencies": {
         "express": "^4.17.1",
