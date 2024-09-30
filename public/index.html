@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Submission</title>
+</head>
+<body>
+  <h1>Submit your details</h1>
+  
+  <form id="userForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+    
+    <label for="phone">Phone:</label>
+    <input type="tel" id="phone" name="phone" required><br><br>
+    
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById('userForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent the default form submission
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+  
+      // Create payload object
+      const data = {
+        name: name,
+        email: email,
+        phone: phone
+      };
+  
+      try {
+        // Check if the user already exists by email or phone
+        const checkResponse = await fetch('/api/checkUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, phone })
+        });
+  
+        const checkResult = await checkResponse.json();
+        console.log('Check Result:', checkResult); // Debugging log
+  
+        if (checkResult.exists) {
+          alert('User with this email or phone already exists!');
+        } else {
+          // If no duplicate, save the user
+          const saveResponse = await fetch('/api/saveUser', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+  
+          const saveResult = await saveResponse.json();
+          console.log('Save Result:', saveResult); // Debugging log
+  
+          if (saveResult.success) {
+            console.log('Redirecting to checkout...'); // Debugging log
+            // Redirect to the desired URL on successful submission
+            window.location.href = 'https://www.zuarifoods.com/checkouts/cn/Z2NwLWFzaWEtc291dGhlYXN0MTowMUo5MTY0NVJUWjBLMU1WS0dKREI3Slc4SA';
+          } else {
+            alert('There was a problem saving the user data.');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Server error, please try again later.');
+      }
+    });
+  </script>
+  
+</body>
+</html>
